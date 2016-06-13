@@ -8,9 +8,10 @@
 #include <SME_window.h>
 #include <SME_core.h>
 #include <SME_events.h>
-#include <iostream>
 #include <SME_render.h>
 #include <SME_pipeline.h>
+#include <assert.h>
+#include <iostream>
 
 void update() {
     SME::Events::Event event;
@@ -54,10 +55,7 @@ int main(int argc, char** argv) {
     SME::Window::create(1920 * 3 / 4, 1080 * 3 / 4, "Test", SME_WINDOW_RESIZABLE);
     SME::TestPipeline pipeline;
     SME::Render::addPipeline(&pipeline);
-    if(!SME::Render::init("Test", VK_MAKE_VERSION(0, 0, 1))){
-        fprintf(stderr, "Couldn't initialise rendering lib!");
-        return -1;
-    }
+    if(!SME::Render::init("Test", VK_MAKE_VERSION(0, 0, 1))) assert("Couldn't initialise rendering lib!");
     SME::Core::addLoopUpdateHook(update);
     SME::Core::start();
     return 0;

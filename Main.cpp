@@ -10,6 +10,7 @@
 #include <SME_events.h>
 #include <SME_render.h>
 #include <SME_pipeline.h>
+#include <SME_config.h>
 #include <assert.h>
 #include <iostream>
 
@@ -51,6 +52,18 @@ void update() {
 }
 
 int main(int argc, char** argv) {
+    SME::Config::loadFile("test.cfg");
+    SME::Config::registerValue("a", "test");
+    SME::Config::registerValue("b", 12);
+    SME::Config::registerValue("c", 1.234);
+    SME::Config::registerValue("d", 9223372036854775807);
+    SME::Config::registerValue("e", -123);
+    SME::Config::registerValue("f", true);
+    
+    std::cout << "f: " << SME::Config::getValue<bool>("f") << std::endl;
+    
+    SME::Config::saveFile("test.cfg");
+    
     SME::Core::init();
     SME::Window::create(1920 * 3 / 4, 1080 * 3 / 4, "Test", SME_WINDOW_RESIZABLE);
     SME::TestPipeline pipeline;

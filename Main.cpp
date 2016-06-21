@@ -66,9 +66,12 @@ int main(int argc, char** argv) {
     
     SME::Core::init();
     SME::Window::create(1920 * 3 / 4, 1080 * 3 / 4, "Test", SME_WINDOW_RESIZABLE);
-    SME::TestPipeline pipeline;
-    SME::Render::addPipeline(&pipeline);
-    if(!SME::Render::init("Test", VK_MAKE_VERSION(0, 0, 1))) assert("Couldn't initialise rendering lib!");
+    SME::TestPipeline* pipeline = new SME::TestPipeline();
+    SME::Render::addPipeline(pipeline);
+    if(!SME::Render::init("Test", VK_MAKE_VERSION(0, 0, 1))){
+        std::cerr << "Couldn't initialise rendering lib!" << std::endl;
+        return -1;
+    }
     SME::Core::addLoopUpdateHook(update);
     SME::Core::start();
     return 0;

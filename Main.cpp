@@ -65,9 +65,8 @@ int main(int argc, char** argv) {
     
     SME::Config::saveFile("test.cfg");
     
-    SME::XML::Tag tag = SME::XML::parseXML("model.dae");
-    
-    std::cout << "attrib contents = " << SME::XML::getFirstTag(tag, "COLLADA.library_effects.effect.profile_COMMON.technique.phong.emission.color").contents << std::endl;
+    SME::XML::XMLBase xml = SME::XML::parseXML("model.dae");
+    std::cout << "attrib contents = " << SME::XML::getFirstTag(xml, "COLLADA.library_effects.effect.profile_COMMON.technique.phong.emission.color")->contents << std::endl;
     
     SME::Core::init();
     SME::Window::create(1920 * 3 / 4, 1080 * 3 / 4, "Test", SME_WINDOW_RESIZABLE);

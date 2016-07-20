@@ -12,8 +12,11 @@
 #include <SME_pipeline.h>
 #include <SME_config.h>
 #include <SME_xml.h>
+#include <SME_level.h>
 #include <assert.h>
 #include <iostream>
+
+SME::Level::Level level;
 
 void update() {
     SME::Events::Event event;
@@ -50,6 +53,8 @@ void update() {
                 }
         }
     }
+    
+    level.update();
 }
 
 int main(int argc, char** argv) {
@@ -67,6 +72,12 @@ int main(int argc, char** argv) {
     
     SME::XML::XMLBase xml = SME::XML::parseXML("model.dae");
     std::cout << "attrib contents = " << SME::XML::getFirstTag(xml, "COLLADA.library_effects.effect.profile_COMMON.technique.phong.emission.color")->contents << std::endl;
+    
+    level.setParameter<std::string>("test", "test str");
+    level.setParameter("test1", 12);
+    level.addEntity("TestEntity");
+    
+    std::cout << "test: " << level.getParameter<std::string>("test") << ", test1: " << level.getParameter<int>("test1") << std::endl;
     
     SME::Core::init();
     SME::Window::create(1920 * 3 / 4, 1080 * 3 / 4, "Test", SME_WINDOW_RESIZABLE);

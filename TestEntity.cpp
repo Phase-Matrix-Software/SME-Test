@@ -2,5 +2,5 @@
 #include <iostream>
 
 void TestEntity::update() {
-//    std::cout << "Test" << std::endl;
+    SME::Level::Entity::Entity::update();
 }

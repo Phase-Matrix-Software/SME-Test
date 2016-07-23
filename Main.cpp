@@ -14,8 +14,12 @@
 #include <SME_config.h>
 #include <SME_xml.h>
 #include <SME_level.h>
+#include <SME_entity.h>
 #include <assert.h>
 #include <iostream>
+
+#include "TestEntity.h"
+#include "TestAttachment.h"
 
 SME::Level::Level level;
 
@@ -91,9 +95,11 @@ int main(int argc, char** argv) {
 
     level.setParameter<std::string>("test", "test str");
     level.setParameter("test1", 12);
-    level.addEntity("TestEntity");
-
     std::cout << "test: " << level.getParameter<std::string>("test") << ", test1: " << level.getParameter<int>("test1") << std::endl;
+    
+    SME_REGISTER_ENTITY(TestEntity);
+    SME::Level::Entity::Entity *e = level.addEntity("TestEntity"); //If this was done properly, new TestEntity would be used
+    e->addAttachment(new TestAttachment(e));
 
     SME::Window::create(1920 * 3 / 4, 1080 * 3 / 4, "Test", SME_WINDOW_RESIZABLE);
     SME::TestPipeline* pipeline = new SME::TestPipeline();

@@ -10,12 +10,10 @@
 
 #include <SME_entity.h>
 
-class TestEntity : public SME::Level::Entity {
+class TestEntity : public SME::Level::Entity::Entity {
 public:
     void update();
 };
-
-SME_REGISTER_ENTITY(TestEntity);
 
 #endif	/* TESTENTITY_H */
 

@@ -8,3 +8,5 @@ void TestAttachment::onPosChanged(glm::vec3 pos){}
 void TestAttachment::onVelChanged(glm::vec3 vel){}
 void TestAttachment::onRotChanged(glm::vec3 rot){}
 void TestAttachment::onUpdate(){}
+
+TestAttachment::~TestAttachment(){}

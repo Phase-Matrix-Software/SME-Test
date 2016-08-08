@@ -12,6 +12,7 @@
 
 struct TestAttachment : public SME::Level::Entity::Attachment {
     TestAttachment(SME::Level::Entity::Entity *entity);
+    ~TestAttachment();
     
     void onPosChanged(glm::vec3 pos);
     void onVelChanged(glm::vec3 vel);

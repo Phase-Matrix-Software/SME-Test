@@ -15,6 +15,9 @@
 #include <SME_xml.h>
 #include <SME_level.h>
 #include <SME_entity.h>
+#include <SME_audio.h>
+#include <SME_source.h>
+#include <SME_listener.h>
 #include <assert.h>
 #include <iostream>
 
@@ -23,7 +26,10 @@
 
 SME::Level::Level level;
 
+SME::Level::Entity::Entity *e;
+
 void update() {
+    e->setRot(e->getRot() + glm::vec3(0, 2, 0));
     level.update();
 }
 
@@ -36,15 +42,21 @@ class WindowListener : public SME::Event::EventListener {
     }
 };
 
+bool paused = false;
+
 class KeyboardListener : public SME::Event::EventListener {
     void onEvent(SME::Event::Event &event) {
         if (event.getType() == SME::Event::UI::UIEventKeys::KeyDownEvent) {
-            SME::Event::UI::KeyDownEvent &kde = static_cast<SME::Event::UI::KeyDownEvent&>(event);
-            std::cout << kde.keycode << " d, repeated " << kde.repeated << std::endl;
-        } else if (event.getType() == SME::Event::UI::UIEventKeys::KeyUpEvent) {
-            SME::Event::UI::KeyUpEvent &kue = static_cast<SME::Event::UI::KeyUpEvent&>(event);
-            std::cout << kue.keycode << " u" << std::endl;
+            SME::Event::UI::KeyEvent &ke = static_cast<SME::Event::UI::KeyEvent&>(event);
+            std::cout << "keyc: " << ke.keycode << std::endl;
+            std::cout << "scan: " << ke.scancode << std::endl;
         }
+        if (paused) {
+            SME::Audio::resumeAll();
+        } else {
+            SME::Audio::pauseAll();
+        }
+        paused = !paused;
     }
 };
 
@@ -98,16 +110,39 @@ int main(int argc, char** argv) {
     std::cout << "test: " << level.getParameter<std::string>("test") << ", test1: " << level.getParameter<int>("test1") << std::endl;
     
     SME_REGISTER_ENTITY(TestEntity);
-    SME::Level::Entity::Entity *e = level.addEntity("TestEntity"); //If this was done properly, new TestEntity would be used
-    e->addAttachment(new TestAttachment(e));
-
+    e = level.addEntity("TestEntity");
+    glm::vec3 eRot (0, 0, 0);
+    e->setRot(eRot);
+    
+    SME::Audio::init();
+    SME::Audio::loadOGG("freq.ogg", "freq");
+    SME::Audio::ListenerAttachment *l = new SME::Audio::ListenerAttachment(e);
+    e->addAttachment(l);
+    l->setActive();
+    SME::Audio::Source s;
+    s.playSound("freq");
+    s.setPos(glm::vec3(0, 0, 3));
+    
+    glm::vec3 f = e->getForwardVector();
+    glm::vec3 u = e->getUpwardVector();
+    glm::vec3 le = glm::cross(f, u);
+    
+    std::cout << "p2.x=" << f.x << ";p2.y=" << f.y << ";p2.z=" << f.z << ";"
+    << std::endl << "p3.x=" << u.x << ";p3.y=" << u.y << ";p3.z=" << u.z << ";"
+    << std::endl << "p4.x=" << le.x << ";p4.y=" << le.y << ";p4.z=" << le.z << ";"
+    << std::endl;
+    
     SME::Window::create(1920 * 3 / 4, 1080 * 3 / 4, "Test", SME_WINDOW_RESIZABLE);
     SME::TestPipeline* pipeline = new SME::TestPipeline();
     SME::Render::addPipeline(pipeline);
+    
+#ifndef NORENDER
     if (!SME::Render::init("Test", VK_MAKE_VERSION(0, 0, 1))) {
         std::cerr << "Couldn't initialise rendering lib!" << std::endl;
         return -1;
     }
+#endif
+    
     SME::Core::addLoopUpdateHook(update);
 
     SME::Core::start();
